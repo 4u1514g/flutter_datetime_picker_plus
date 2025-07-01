@@ -454,19 +454,15 @@ class Time12hPickerModel extends CommonPickerModel {
       : super(locale: locale) {
     this.currentTime = currentTime ?? DateTime.now();
 
-    _currentRightIndex = this.currentTime.hour % 12;
-    _currentMiddleIndex = this.currentTime.minute;
+    _currentMiddleIndex = this.currentTime.hour % 12;
+    _currentRightIndex = this.currentTime.minute;
     _currentLeftIndex = this.currentTime.hour < 12 ? 0 : 1;
   }
 
   @override
   String? rightStringAtIndex(int index) {
-    if (index >= 0 && index < 12) {
-      if (index == 0) {
-        return digits(12, 2);
-      } else {
-        return digits(index, 2);
-      }
+    if (index >= 0 && index < 60) {
+      return digits(index, 2);
     } else {
       return null;
     }
@@ -474,8 +470,12 @@ class Time12hPickerModel extends CommonPickerModel {
 
   @override
   String? middleStringAtIndex(int index) {
-    if (index >= 0 && index < 60) {
-      return digits(index, 2);
+    if (index >= 0 && index < 12) {
+      if (index == 0) {
+        return digits(12, 2);
+      } else {
+        return digits(index, 2);
+      }
     } else {
       return null;
     }
@@ -509,12 +509,12 @@ class Time12hPickerModel extends CommonPickerModel {
 
   @override
   DateTime finalTime() {
-    int hour = _currentRightIndex + 12 * _currentLeftIndex;
+    int hour = _currentMiddleIndex + 12 * _currentLeftIndex;
     return currentTime.isUtc
         ? DateTime.utc(currentTime.year, currentTime.month, currentTime.day,
-            hour, _currentMiddleIndex, 0)
+        hour, _currentRightIndex, 0)
         : DateTime(currentTime.year, currentTime.month, currentTime.day, hour,
-            _currentMiddleIndex, 0);
+        _currentRightIndex, 0);
   }
 }
 
